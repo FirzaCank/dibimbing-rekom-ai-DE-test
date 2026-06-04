@@ -64,4 +64,4 @@ row count, countries with no languages, and DB tuple ordering.
 
 ## Architecture (Task 2)
 
-Data pipeline design (Staging -> ODS -> DWH) is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+![Data Architecture](docs/architecture.png)
