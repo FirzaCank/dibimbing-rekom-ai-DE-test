@@ -1,0 +1,40 @@
+# Two services: the FastAPI app and PostgreSQL.
+# The app waits for postgres to pass its healthcheck before starting, so the
+# first request never races an unready database (depends_on: service_healthy,
+# which is the correct fix instead of an arbitrary sleep).
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rekom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rekom}
+      POSTGRES_DB: ${POSTGRES_DB:-rekom}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # schema.sql is auto-applied by the postgres image on first init.
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rekom} -d ${POSTGRES_DB:-rekom}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      # Service name "postgres" resolves to the db container on the compose network.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rekom}:${POSTGRES_PASSWORD:-rekom}@postgres:5432/${POSTGRES_DB:-rekom}
+      COUNTRIES_API_BASE: https://restcountries.com/v3.1
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
