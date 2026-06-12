@@ -28,8 +28,6 @@ psql "$DATABASE_URL" -f db/schema.sql
 uvicorn app.main:app --reload
 ```
 
-Swagger UI at http://localhost:8000/docs
-
 ## Usage
 
 ```
