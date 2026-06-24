@@ -1,15 +1,13 @@
-# rekom-data-engineer-test
-
 REST API that takes a region input, hits the [REST Countries API](https://restcountries.com),
 explodes each country's `languages` dict into one row per language, stores everything in
 PostgreSQL, and returns the normalized entries as JSON.
 
 ## Stack
 
-- **FastAPI + asyncpg** — async all the way, COPY bulk insert to keep DB round trips to one
-- **httpx** — non-blocking HTTP client
-- **Pydantic v2** — validates raw_id (13 chars) and user_id (7 digits) before anything hits the DB
-- **Docker + compose** — app + postgres, with a healthcheck gate so app waits for DB to be ready
+- **FastAPI + asyncpg** - async all the way, COPY bulk insert to keep DB round trips to one
+- **httpx** - non-blocking HTTP client
+- **Pydantic v2** - validates raw_id (13 chars) and user_id (7 digits) before anything hits the DB
+- **Docker + compose** - app + postgres, with a healthcheck gate so app waits for DB to be ready
 
 ## Running
 
